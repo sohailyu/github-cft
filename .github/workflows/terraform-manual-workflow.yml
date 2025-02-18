@@ -1,0 +1,121 @@
+on:
+    workflow_dispatch:
+      inputs:
+        env:
+          description: "Target Environment to deploy Terraform code"
+          required: true
+          default: "dev"
+          type: choice
+          options:
+            - dev
+            - stage
+            - prod
+        terraform_operation:
+          description: "Terraform operation: plan, apply, destroy"
+          required: true
+          default: "plan"
+          type: choice
+          options:
+            - plan
+            - apply
+            - destroy
+# env:
+#   TF_LOG: DEBUG
+jobs:
+    terraform:
+        runs-on: terraform-shared
+        environment: ${{inputs.env}}
+        # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
+        defaults:
+          run:
+            shell: bash
+            working-directory: ./environments/${{inputs.env}}
+        permissions:
+          id-token: write
+          contents: read
+        steps:
+          - name: Nodejs installation on the runner node
+            uses: actions/setup-node@v4
+            with:
+              node-version: 20
+              
+          - name: "Checkout"
+            uses: actions/checkout@v4
+
+          - name: Configure AWS credentials
+            uses: aws-actions/configure-aws-credentials@v4
+            with:
+              aws-region: us-west-2
+              role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+              role-session-name: Session-GitHubActions
+
+          - name: Setup Terraform with specified version on the runner
+            uses: hashicorp/setup-terraform@v3
+            with:
+              terraform_version: 1.8.2
+
+          - name: Terraform format
+            id: fmt
+            run: terraform fmt -check
+            continue-on-error: true
+
+          - name: Terraform init
+            id: init
+            run: terraform init
+
+          - name: Terraform validate
+            id: validate
+            run: terraform validate
+
+          # - name: Terraform unlock
+          #   id: unlock
+          #   run: |
+          #     terraform force-unlock -force addcd079-c04f-4ee9-108c-10643cbf0d67
+        
+
+          - name: Terraform plan
+            id: plan
+            run: terraform plan -var-file=./${{inputs.env}}.tfvars  -input=false  -out=${{inputs.env}}-plan
+            if: "${{ github.event.inputs.terraform_operation == 'plan' ||  github.event.inputs.terraform_operation == 'apply' }}"
+
+          - name: Terraform Plan Status
+            if: steps.plan.outcome == 'failure'
+            run: exit 1
+    
+          - name: Terraform apply
+            run: terraform apply "${{inputs.env}}-plan"
+            if: "${{ github.event.inputs.terraform_operation == 'apply' }}"
+
+          - name: Terraform state list resources Before destroy
+            id: pre-statelist
+            run: terraform state list 
+            if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
+
+          # - name: Sleep for 40 seconds
+          #   run: sleep 40s
+          #   shell: bash
+
+        #   - name: Terraform unlock
+        #     id: unlock
+        #     run: |
+        #       terraform force-unlock -force faed45e0-9d97-d9a4-341c-f78bca1123d5
+        # -target="module.kubernetes_dashboard_module"
+        
+            
+          - name: Terraform destroy Module
+            run: terraform destroy  -var-file=./${{inputs.env}}.tfvars  -auto-approve -input=false
+            if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
+
+          # - name: Terraform destroy
+          #   run: terraform destroy  -var-file=./stage.tfvars -auto-approve -input=false
+          #   if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
+
+          
+          # - name: Terraform Destroy
+          #   run: terraform destroy -var-file=./stage.tfvars -target="module.cluster_creation.aws_iam_openid_connect_provider.eks_cluster_oidc" -target="module.cluster_creation.aws_iam_role.autoscaler" -target="module.cluster_creation.aws_iam_role.cluster_load_balancer" -target="module.cluster_creation.aws_iam_role_policy.autoscaler_policy" -target="module.cluster_creation.aws_iam_role_policy.cluster_load_balancer_policy" -auto-approve -input=false
+          #   if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
+
+          # - name: Terraform state list resources After destroy
+          #   id: post-statelist 
+          #   run: terraform state list module.cluster_creation.aws_iam_openid_connect_provider.eks_cluster_oidc module.cluster_creation.aws_iam_role.autoscaler module.cluster_creation.aws_iam_role.cluster_load_balancer module.cluster_creation.aws_iam_role_policy.autoscaler_policy module.cluster_creation.aws_iam_role_policy.cluster_load_balancer_policy
+          #   if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
