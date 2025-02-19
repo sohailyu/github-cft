@@ -23,7 +23,7 @@ on:
 #   TF_LOG: DEBUG
 jobs:
     terraform:
-        runs-on: terraform-shared
+        runs-on: ubuntu-18.04
         environment: ${{inputs.env}}
         # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
         defaults:
