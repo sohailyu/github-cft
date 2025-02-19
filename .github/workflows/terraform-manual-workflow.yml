@@ -46,7 +46,7 @@ jobs:
             uses: aws-actions/configure-aws-credentials@v4
             with:
               aws-region: us-west-2
-              role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+              role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_ID}}:role/admin-oidc
               role-session-name: Session-GitHubActions
 
           - name: Setup Terraform with specified version on the runner
