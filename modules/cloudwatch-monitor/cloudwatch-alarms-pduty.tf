@@ -81,12 +81,6 @@ resource "aws_sns_topic_policy" "sns" {
   policy = data.aws_iam_policy_document.sns.json
 }
 
-resource "aws_sns_topic_subscription" "pagerduty" {
-  topic_arn              = aws_sns_topic.topic.arn
-  protocol               = "https"
-  endpoint               = local.pagerduty_endpoint
-  endpoint_auto_confirms = true
-}
 
 resource "aws_cloudwatch_metric_alarm" "alarm" {
   count = length(var.alarms)
