@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-s3bucket-sctv-loki-cdn-shared"
-    key            = "terraform/sctv-loki-monitor/stage/terraform.tfstate"
-    dynamodb_table = "terraform-state-lock-table-sctv-loki-cdn-shared"
-    region         = "us-west-2"
+    bucket         = "github-s3-backend"
+    key            = "github-s3-backend/stage/terraform.tfstate"
+    #dynamodb_table = "terraform-state-lock-table-sctv-loki-cdn-shared"
+    region         = "us-east-2"
     acl            = "bucket-owner-full-control"
   }
 }
