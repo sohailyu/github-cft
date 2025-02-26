@@ -7,7 +7,7 @@ module "cloudwatch_monitor_module" {
   slack_channel_id          = var.slack_channel_id
   slack_workspace_id        = var.slack_workspace_id
   alarms = var.alarms
-#  providers = {
- #   awscc.awsccnew =  awscc.awscc-provider
+  providers = {
+    awscc.awsccnew =  awscc.awscc-provider
   }
 }
