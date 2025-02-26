@@ -119,3 +119,5 @@ jobs:
           #   id: post-statelist 
           #   run: terraform state list module.cluster_creation.aws_iam_openid_connect_provider.eks_cluster_oidc module.cluster_creation.aws_iam_role.autoscaler module.cluster_creation.aws_iam_role.cluster_load_balancer module.cluster_creation.aws_iam_role_policy.autoscaler_policy module.cluster_creation.aws_iam_role_policy.cluster_load_balancer_policy
           #   if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
+
+          
