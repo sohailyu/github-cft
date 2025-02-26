@@ -4,8 +4,8 @@ env                        = "stage"
 
 distribution_id = "E3RJTSGXVSPN7P"
 pagerduty_integration_key = ""  //d0e18017b6624009c05e66b02ea7eae0 commented for stage
-slack_channel_id = "C07TWMC0M4L"  //#loki-gateway-alerts-nonprod
-slack_workspace_id = "T0733TMPZ"   // Also known as TeamID
+slack_channel_id = "Cdd07TWMC0M4L"  //#loki-gateway-alerts-nonprod
+slack_workspace_id = "T0733TwwMPZ"   // Also known as TeamID
 
 alarms = {
   # Requests2mAverage = {
