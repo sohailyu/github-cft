@@ -1,4 +1,4 @@
-target_account_id          = "178936557468" # aws-smartcast-services-stage
+target_account_id          = "778455851442" # aws-smartcast-services-stage
 region                     = "us-east-1"
 env                        = "stage"
 
