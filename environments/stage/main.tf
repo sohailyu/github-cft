@@ -1,4 +1,4 @@
-module "cloudwatch_monitor_module" {
+module "new-module" {
   source                    = "../../modules/new-module"
   env                       = var.env
   general_tags              = var.general_tags
