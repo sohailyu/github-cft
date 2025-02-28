@@ -1,31 +1,13 @@
-resource "aws_s3_bucket" "test_bucket" {
-  bucket = "test0990890"
-
-  tags = {
-    Name        = "test0990890"
-    Environment = "Dev"
+module "cloudwatch_monitor_module" {
+  source                    = "../../modules/new-module"
+  env                       = var.env
+  general_tags              = var.general_tags
+  distribution_id           = var.distribution_id
+  pagerduty_integration_key = var.pagerduty_integration_key
+  slack_channel_id          = var.slack_channel_id
+  slack_workspace_id        = var.slack_workspace_id
+  alarms = var.alarms
+  providers = {
+    awscc.awsccnew =  awscc.awscc-provider
   }
-}
-
-resource "aws_s3_bucket_policy" "test_bucket_policy" {
-  bucket = aws_s3_bucket.test_bucket.id
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "arn:aws:iam::778455851442:user/cloudformation"
-      },
-      "Action": "s3:*",
-      "Resource": [
-        "arn:aws:s3:::test0990890",
-        "arn:aws:s3:::test0990890/*"
-      ]
-    }
-  ]
-}
-POLICY
 }
