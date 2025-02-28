@@ -17,7 +17,7 @@ resource "aws_s3_bucket_policy" "test_bucket_policy" {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::123456789012:user/specific-user"
+        "AWS": "arn:aws:iam::778455851442:user/cloudformation"
       },
       "Action": "s3:*",
       "Resource": [
