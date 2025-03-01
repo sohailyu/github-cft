@@ -82,6 +82,12 @@ resource "aws_lb_target_group" "tg" {
   vpc_id   = aws_vpc.main.id
 }
 
+resource "aws_lb_target_group_attachment" "web_tg_attachment" {
+  target_group_arn = aws_lb_target_group.tg.arn
+  target_id        = aws_instance.web.id
+  port            = 80
+}
+
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = 80
